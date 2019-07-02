@@ -24,7 +24,11 @@
     padding: 0.5em;
 }
 
-.card {
-    padding: 0.5em;
-    border: 1px solid #c86;
+.main {
+    flex-grow: 1;
+}
+
+.content-section {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }

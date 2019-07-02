@@ -19,6 +19,7 @@ export default function Searchbar(props) {
                 }}
                 placeholder="Search"
                 inputProps={{ "aria-label": "Search" }}
+                value={props.searchQuery}
                 onChange={handleInput}
             />
         </div>

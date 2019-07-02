@@ -7,7 +7,7 @@ export default function PopularMovies(props) {
     const { genres, movies, hasMore, loadPopularMovies } = props;
 
     return (
-        <Container>
+        <Container maxWidth="xl">
             <InfiniteScroll
                 pageStart={0}
                 loadMore={loadPopularMovies}
@@ -17,7 +17,7 @@ export default function PopularMovies(props) {
             >
                 <Grid container spacing={2}>
                     {movies.map((movie, idx) => (
-                        <Grid item xs={6} sm={4} md={3} key={idx + 1}>
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={idx + 1}>
                             <ListMovie movie={movie} genres={genres} />
                         </Grid>
                     ))}

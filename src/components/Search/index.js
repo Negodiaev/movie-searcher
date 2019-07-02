@@ -1,15 +1,22 @@
 import React from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, Container } from "@material-ui/core";
 import SearchMovies from "../SearchMovies";
 
 export default function Search(props) {
-    const { genres, searchMovies, hasMoreMovies, loadMoreSearchResults } = props;
+    const { genres, searchMovies, searchQuery, hasMoreMovies, loadMoreSearchResults } = props;
+    const isNotCharacters = !searchQuery.length || /[^A-z]/gi.test(searchQuery);
+
+    if (!searchMovies.length && (searchQuery.length > 1 || isNotCharacters)) {
+        return "No movies";
+    }
 
     return (
-        <section>
-            <Typography variant="h2" gutterBottom>
-                Search results:
-            </Typography>
+        <section className="content-section">
+            <Container maxWidth="xl">
+                <Typography variant="h1" gutterBottom>
+                    Search results for "{searchQuery}":
+                </Typography>
+            </Container>
             <SearchMovies
                 genres={genres}
                 movies={searchMovies}
