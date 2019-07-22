@@ -7,6 +7,7 @@ import AppFooter from "./components/AppFooter";
 import Home from "./components/Home";
 import Search from "./components/Search";
 import Movie from "./components/Movie";
+import Favorites from "./components/Favorites";
 import NoMatch from "./components/NoMatch";
 import "../node_modules/slick-carousel/slick/slick.css";
 import "../node_modules/slick-carousel/slick/slick-theme.css";
@@ -19,6 +20,7 @@ class App extends React.Component {
         genres: [],
         popularMovies: [],
         searchMovies: [],
+        favorites: [],
         searchQuery: "",
         hasMoreMovies: true,
         toSearch: false,
@@ -124,6 +126,19 @@ class App extends React.Component {
         this.setState({ toSearch: false });
     };
 
+    toggleFavorites = movie => {
+        const movieId = movie.id;
+        let favorites = JSON.parse(localStorage.getItem("favorites")) || {};
+
+        if (favorites.hasOwnProperty(movieId)) {
+            delete favorites[movieId];
+        } else {
+            favorites[movie.id] = movie;
+        }
+
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+    };
+
     componentDidMount() {
         this.fetchGenres();
     }
@@ -164,6 +179,7 @@ class App extends React.Component {
                                                 {...routeProps}
                                                 {...popularMoviesProps}
                                                 loadPopularMovies={this.fetchPopularMovies}
+                                                toggleFavorites={this.toggleFavorites}
                                             />
                                         )}
                                     />
@@ -174,6 +190,7 @@ class App extends React.Component {
                                                 {...routeProps}
                                                 {...searchMoviesProps}
                                                 loadMoreSearchResults={this.loadMoreSearchResults}
+                                                toggleFavorites={this.toggleFavorites}
                                             />
                                         )}
                                     />
@@ -186,6 +203,10 @@ class App extends React.Component {
                                                 removeRedirectToSearch={this.removeRedirectToSearch}
                                             />
                                         )}
+                                    />
+                                    <Route
+                                        path="/favorites"
+                                        render={routeProps => <Favorites {...routeProps} />}
                                     />
                                     <Route component={NoMatch} />
                                 </Switch>

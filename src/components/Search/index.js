@@ -3,7 +3,14 @@ import { Typography, Container } from "@material-ui/core";
 import SearchMovies from "../SearchMovies";
 
 export default function Search(props) {
-    const { genres, searchMovies, searchQuery, hasMoreMovies, loadMoreSearchResults } = props;
+    const {
+        genres,
+        searchMovies,
+        searchQuery,
+        hasMoreMovies,
+        loadMoreSearchResults,
+        toggleFavorites
+    } = props;
     const isNotCharacters = !searchQuery.length || /[^A-z]/gi.test(searchQuery);
 
     if (!searchMovies.length && (searchQuery.length > 1 || isNotCharacters)) {
@@ -22,6 +29,7 @@ export default function Search(props) {
                 movies={searchMovies}
                 hasMore={hasMoreMovies}
                 loadMoreSearchResults={loadMoreSearchResults}
+                toggleFavorites={toggleFavorites}
             />
         </section>
     );

@@ -1,6 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
+    wrapper: {
+        position: "relative",
+        color: "#fff"
+    },
     link: {
         display: "block",
         marginLeft: "auto",

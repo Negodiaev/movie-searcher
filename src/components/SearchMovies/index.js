@@ -4,12 +4,12 @@ import { Container, Grid, CircularProgress } from "@material-ui/core";
 import ListMovie from "../ListMovie";
 
 export default function SearchMovies(props) {
-    const { genres, movies, hasMore, loadMoreSearchResults } = props;
+    const { genres, movies, hasMore, loadMoreSearchResults, toggleFavorites } = props;
 
     return (
         <Container maxWidth="xl">
             <InfiniteScroll
-                pageStart={1}
+                pageStart={0}
                 loadMore={loadMoreSearchResults}
                 hasMore={hasMore}
                 loader={<CircularProgress className="loader" key={0} />}
@@ -18,7 +18,7 @@ export default function SearchMovies(props) {
                 <Grid container spacing={2}>
                     {movies.map((movie, idx) => (
                         <Grid item xs={12} sm={6} md={4} lg={3} key={idx + 1}>
-                            <ListMovie movie={movie} genres={genres} />
+                            <ListMovie movie={movie} genres={genres} toggleFavorites={toggleFavorites} />
                         </Grid>
                     ))}
                 </Grid>

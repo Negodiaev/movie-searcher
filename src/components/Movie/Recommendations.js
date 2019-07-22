@@ -6,6 +6,7 @@ import Slider from "react-slick";
 const sliderSettings = {
     slidesToShow: 6,
     lazyLoad: true,
+    draggable: false,
     responsive: [
         {
             breakpoint: 479,

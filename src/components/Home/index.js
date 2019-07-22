@@ -3,7 +3,7 @@ import { Typography, Container } from "@material-ui/core";
 import PopularMovies from "../PopularMovies";
 
 export default function Home(props) {
-    const { genres, popularMovies, hasMoreMovies, loadPopularMovies } = props;
+    const { genres, popularMovies, hasMoreMovies, loadPopularMovies, toggleFavorites } = props;
 
     return (
         <section className="content-section" spacing={2}>
@@ -17,6 +17,7 @@ export default function Home(props) {
                 movies={popularMovies}
                 hasMore={hasMoreMovies}
                 loadPopularMovies={loadPopularMovies}
+                toggleFavorites={toggleFavorites}
             />
         </section>
     );

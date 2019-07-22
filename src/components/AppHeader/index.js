@@ -1,4 +1,5 @@
 import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
     Typography,
     Container,
@@ -31,7 +32,7 @@ export default function AppHeader(props) {
                         <Grid container spacing={2} alignContent="center">
                             <Grid item xs={9} sm={6} md={4} className={classes.titleWrap}>
                                 <Typography className={classes.title} variant="h4" component="div">
-                                    <Link href="/" className={classes.titleLink}>
+                                    <Link to="/" component={RouterLink} className={classes.titleLink}>
                                         Movie Searcher
                                     </Link>
                                 </Typography>
@@ -57,8 +58,26 @@ export default function AppHeader(props) {
                                         onSearchChange={props.onSearchChange}
                                     />
                                     <MenuList className={classes.menu} disablePadding>
-                                        <MenuItem>Popular</MenuItem>
-                                        <MenuItem>Favorites</MenuItem>
+                                        <MenuItem>
+                                            <Link
+                                                to="/"
+                                                component={RouterLink}
+                                                color="inherit"
+                                                underline="none"
+                                            >
+                                                Popular
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <Link
+                                                to="/favorites"
+                                                component={RouterLink}
+                                                color="inherit"
+                                                underline="none"
+                                            >
+                                                Favorites
+                                            </Link>
+                                        </MenuItem>
                                     </MenuList>
                                 </nav>
                             </Grid>
