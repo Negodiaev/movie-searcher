@@ -29,7 +29,6 @@ class Movie extends React.Component {
     };
 
     componentWillMount() {
-        this.props.removeRedirectToSearch();
         this.fetchDetails(this.props.match.params.id);
     }
 

@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
+import { withRouter } from "react-router";
 import { CssBaseline } from "@material-ui/core";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import AppHeader from "./components/AppHeader";
@@ -20,12 +21,11 @@ class App extends React.Component {
         genres: [],
         popularMovies: [],
         searchMovies: [],
-        favorites: [],
         searchQuery: "",
-        hasMoreMovies: true,
-        toSearch: false,
-        backHome: false
+        hasMoreMovies: true
     };
+
+    isSearch = false;
 
     fetchGenres = () => {
         const { apiKey } = this.state;
@@ -46,12 +46,10 @@ class App extends React.Component {
     handleSearch = searchQuery => {
         this.setState({ searchQuery: searchQuery }, () => {
             if (searchQuery.length) {
-                this.setState({ toSearch: true, backHome: false }, () => {
-                    window.scrollTo(0, 0);
-                    this.fetchSearchResults();
-                });
+                window.scrollTo(0, 0);
+                this.fetchSearchResults();
             } else {
-                this.setState({ popularMovies: [], hasMoreMovies: true, toSearch: false, backHome: true });
+                this.setState({ popularMovies: [], hasMoreMovies: true });
             }
         });
     };
@@ -122,10 +120,6 @@ class App extends React.Component {
 
     checkMoreMovies = (page, totalPages) => page < totalPages;
 
-    removeRedirectToSearch = () => {
-        this.setState({ toSearch: false });
-    };
-
     toggleFavorites = movie => {
         const movieId = movie.id;
         let favorites = JSON.parse(localStorage.getItem("favorites")) || {};
@@ -143,81 +137,72 @@ class App extends React.Component {
         this.fetchGenres();
     }
 
-    componentWillUpdate() {
-        //
+    shouldComponentUpdate(nextProps, nextState) {
+        return !(nextState.searchQuery !== this.state.searchQuery);
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        this.isSearch = nextState.searchMovies !== this.state.searchMovies;
     }
 
     render() {
-        const {
-            genres,
-            popularMovies,
-            searchMovies,
-            searchQuery,
-            hasMoreMovies,
-            toSearch,
-            backHome
-        } = this.state;
+        const { genres, popularMovies, searchMovies, searchQuery, hasMoreMovies } = this.state;
         const popularMoviesProps = { genres, hasMoreMovies, popularMovies };
         const searchMoviesProps = { genres, hasMoreMovies, searchMovies, searchQuery };
-        let redirectLink = toSearch ? "/search" : backHome ? "" : null;
 
         return (
             <React.Fragment>
-                <Router>
-                    {redirectLink !== null && <Redirect to={redirectLink} />}
-                    <CssBaseline />
-                    <MuiThemeProvider theme={theme}>
-                        <div className="App">
-                            <AppHeader searchQuery={searchQuery} onSearchChange={this.handleSearch} />
-                            <main className="main">
-                                <Switch>
-                                    <Route
-                                        path="/"
-                                        exact
-                                        render={routeProps => (
-                                            <Home
-                                                {...routeProps}
-                                                {...popularMoviesProps}
-                                                loadPopularMovies={this.fetchPopularMovies}
-                                                toggleFavorites={this.toggleFavorites}
-                                            />
-                                        )}
-                                    />
-                                    <Route
-                                        path="/search"
-                                        render={routeProps => (
+                <CssBaseline />
+                <MuiThemeProvider theme={theme}>
+                    <div className="App">
+                        <AppHeader searchQuery={searchQuery} onSearchChange={this.handleSearch} />
+                        <main className="main">
+                            <Switch>
+                                {this.isSearch && <Redirect to="/search" />}
+                                <Route
+                                    path="/"
+                                    exact
+                                    render={routeProps => (
+                                        <Home
+                                            {...routeProps}
+                                            {...popularMoviesProps}
+                                            loadPopularMovies={this.fetchPopularMovies}
+                                            toggleFavorites={this.toggleFavorites}
+                                        />
+                                    )}
+                                />
+                                <Route
+                                    path="/search"
+                                    render={routeProps =>
+                                        !searchQuery.length ? (
+                                            <Redirect to="/" />
+                                        ) : (
                                             <Search
                                                 {...routeProps}
                                                 {...searchMoviesProps}
                                                 loadMoreSearchResults={this.loadMoreSearchResults}
                                                 toggleFavorites={this.toggleFavorites}
                                             />
-                                        )}
-                                    />
-                                    <Route
-                                        path="/movie/:id"
-                                        render={routeProps => (
-                                            <Movie
-                                                {...routeProps}
-                                                genres={genres}
-                                                removeRedirectToSearch={this.removeRedirectToSearch}
-                                            />
-                                        )}
-                                    />
-                                    <Route
-                                        path="/favorites"
-                                        render={routeProps => <Favorites {...routeProps} />}
-                                    />
-                                    <Route component={NoMatch} />
-                                </Switch>
-                            </main>
-                            <AppFooter />
-                        </div>
-                    </MuiThemeProvider>
-                </Router>
+                                        )
+                                    }
+                                />
+                                <Route
+                                    path="/movie/:id"
+                                    render={routeProps => <Movie {...routeProps} genres={genres} />}
+                                />
+                                <Route
+                                    path="/favorites"
+                                    render={routeProps => <Favorites {...routeProps} />}
+                                />
+                                <Route component={NoMatch} />
+                            </Switch>
+                        </main>
+                        <AppFooter />
+                    </div>
+                </MuiThemeProvider>
             </React.Fragment>
         );
     }
 }
 
-export default App;
+export default withRouter(App);

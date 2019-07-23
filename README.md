@@ -1,3 +1,9 @@
+# A simple movie searcher with React.js and The Movie Database API
+
+[Demo](https://negodiaev.github.io/movie-searcher/)
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
