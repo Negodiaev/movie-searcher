@@ -4,10 +4,6 @@ const iconStar =
     "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4Igp3aWR0aD0iNDgiIGhlaWdodD0iNDgiCnZpZXdCb3g9IjAgMCA0OCA0OCIKc3R5bGU9IiBmaWxsOiMwMDAwMDA7Ij48ZyBpZD0ic3VyZmFjZTEiPjxwYXRoIHN0eWxlPSIgZmlsbDojRkZDQTI4OyIgZD0iTSAyNCA0LjA1MDc4MSBMIDMwLjQ4ODI4MSAxNy4xODc1IEwgNDUgMTkuMjg5MDYzIEwgMzQuNSAyOS41MTE3MTkgTCAzNi45NzY1NjMgNDMuOTQ5MjE5IEwgMjQgMzcuMTM2NzE5IEwgMTEuMDIzNDM4IDQzLjk0OTIxOSBMIDEzLjUgMjkuNTExNzE5IEwgMyAxOS4yODkwNjMgTCAxNy41MTE3MTkgMTcuMTg3NSBaICI+PC9wYXRoPjwvZz48L3N2Zz4=')";
 
 const useStyles = makeStyles(theme => ({
-    wrap: {
-        padding: ".625em 5px",
-        textAlign: "center"
-    },
     root: {
         display: "inline-flex",
         marginBottom: ".875em",
@@ -37,6 +33,9 @@ const useStyles = makeStyles(theme => ({
         marginLeft: "auto",
         marginRight: "auto",
         maxWidth: "10rem"
+    },
+    popularity: {
+        marginBottom: ".875em"
     }
 }));
 

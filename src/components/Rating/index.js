@@ -7,7 +7,7 @@ export default function Rating(props) {
     const classes = useStyles();
 
     return (
-        <div className={classes.wrap}>
+        <>
             <div className={classes.root}>
                 <Typography component="p" className={classes.info}>
                     <Typography component="span">
@@ -20,11 +20,11 @@ export default function Rating(props) {
                 </Typography>
             </div>
             <Divider className={classes.divider} />
-            <Typography component="p">
+            <Typography component="p" className={classes.popularity}>
                 <small>
                     <strong>Popularity:</strong> {popularity.toFixed(2)}
                 </small>
             </Typography>
-        </div>
+        </>
     );
 }

@@ -137,9 +137,9 @@ class App extends React.Component {
         this.fetchGenres();
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return !(nextState.searchQuery !== this.state.searchQuery);
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return !(nextState.searchQuery !== this.state.searchQuery);
+    // }
 
     componentWillUpdate(nextProps, nextState) {
         this.isSearch = nextState.searchMovies !== this.state.searchMovies;
@@ -149,6 +149,7 @@ class App extends React.Component {
         const { genres, popularMovies, searchMovies, searchQuery, hasMoreMovies } = this.state;
         const popularMoviesProps = { genres, hasMoreMovies, popularMovies };
         const searchMoviesProps = { genres, hasMoreMovies, searchMovies, searchQuery };
+        const favoriteMoviesProps = { genres };
 
         return (
             <React.Fragment>
@@ -188,11 +189,23 @@ class App extends React.Component {
                                 />
                                 <Route
                                     path="/movie/:id"
-                                    render={routeProps => <Movie {...routeProps} genres={genres} />}
+                                    render={routeProps => (
+                                        <Movie
+                                            {...routeProps}
+                                            genres={genres}
+                                            toggleFavorites={this.toggleFavorites}
+                                        />
+                                    )}
                                 />
                                 <Route
                                     path="/favorites"
-                                    render={routeProps => <Favorites {...routeProps} />}
+                                    render={routeProps => (
+                                        <Favorites
+                                            {...routeProps}
+                                            {...favoriteMoviesProps}
+                                            toggleFavorites={this.toggleFavorites}
+                                        />
+                                    )}
                                 />
                                 <Route component={NoMatch} />
                             </Switch>

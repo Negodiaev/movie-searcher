@@ -17,10 +17,17 @@ import {
     Divider
 } from "@material-ui/core";
 import Rating from "../Rating";
+import ButtonFavorite from "../ButtonFavorite";
 
 const styles = {
     info: {
         paddingTop: ".7143em"
+    },
+    sidebar: {
+        content: {
+            padding: ".625em 5px",
+            textAlign: "center"
+        }
     },
     tableWrap: {
         overflow: "auto",
@@ -34,6 +41,11 @@ const styles = {
                 fontWeight: 700
                 // whiteSpace: "nowrap"
             }
+        }
+    },
+    buttons: {
+        favorite: {
+            fontSize: ".625rem"
         }
     }
 };
@@ -51,31 +63,38 @@ const fillCompaniesList = companies =>
 const fillMoneyValue = value => (value ? `$${value.toLocaleString("en-US").replace(/,/g, ".")}` : "–");
 
 export default function Details(props) {
-    const { details, collection } = props;
+    const { details, collection, toggleFavorites } = props;
     const { genres, runtime, homepage } = details;
     const originalLanguage = details.original_language;
     const productionCountries = details.production_countries;
     const spokenLanguages = details.spoken_languages;
 
-    console.log(details);
+    // console.log(details);
 
     return (
         <section style={styles.info}>
             <Card>
                 <Grid container justify="center" spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
+                    <Grid item xs={12} sm={6} md={4} lg={3}>
                         <CardMedia
                             image={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
                             title={details.title}
                             alt={`${details.title} poster`}
                         />
-                        <Rating
-                            average={details.vote_average}
-                            count={details.vote_count}
-                            popularity={details.popularity}
-                        />
+                        <div style={styles.sidebar.content}>
+                            <Rating
+                                average={details.vote_average}
+                                count={details.vote_count}
+                                popularity={details.popularity}
+                            />
+                            <ButtonFavorite
+                                movie={details}
+                                toggleFavorites={toggleFavorites}
+                                styles={styles.buttons.favorite}
+                            />
+                        </div>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={9}>
+                    <Grid item xs={12} sm={12} md={8} lg={9}>
                         <CardContent>
                             <Typography variant="h3" component="h2" gutterBottom>
                                 About:

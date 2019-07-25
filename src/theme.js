@@ -123,6 +123,17 @@ const theme = createMuiTheme({
                 // paddingLeft: units.spacing(2)
             }
         },
+        MuiButton: {
+            root: {
+                maxWidth: "100%"
+            },
+            label: {
+                display: "inline-block",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis"
+            }
+        },
         MuiCircularProgress: {
             root: {
                 margin: units.spacing(3)

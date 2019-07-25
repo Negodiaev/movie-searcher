@@ -29,7 +29,7 @@ class Movie extends React.Component {
     };
 
     componentWillMount() {
-        this.fetchDetails(this.props.match.params.id);
+        !Object.keys(this.state.details).length && this.fetchDetails(this.props.match.params.id);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -40,10 +40,14 @@ class Movie extends React.Component {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextState.details.id !== this.state.details.id;
+    }
+
     render() {
         const { state, props } = this;
         const { details } = state;
-        const { genres } = props;
+        const { genres, toggleFavorites } = props;
         const backgroundImage = details.backdrop_path
             ? `url(https://image.tmdb.org/t/p/w1280/${state.details.backdrop_path})`
             : "none";
@@ -59,7 +63,13 @@ class Movie extends React.Component {
                     <section className={props.classes.content}>
                         <Heading details={details} />
                         <Divider />
-                        {Object.keys(details).length && <Details details={details} collection={collection} />}
+                        {Object.keys(details).length && (
+                            <Details
+                                details={details}
+                                collection={collection}
+                                toggleFavorites={toggleFavorites}
+                            />
+                        )}
 
                         {recommendations && recommendations.length ? (
                             <Recommendations
