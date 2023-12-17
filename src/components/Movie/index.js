@@ -1,98 +1,98 @@
-import React from "react";
-import { Container, Divider } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { CircularProgress, Container, Divider } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import Heading from "./Heading";
 import Details from "./Details";
 import Recommendations from "./Recommendations";
 import styles from "./styles";
+import { useParams } from "react-router-dom";
 
-const API_KEY =
-  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MTcyMmE4MzYzOGI0MmFiYmYwYWVjOWQ3ODNkODU4NyIsInN1YiI6IjVkMDNiMGFhMGUwYTI2MzMzYWQyMGY0YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OPk5SaNfurhOYbFAhLQufo3XG-p2WhemPbTsng1CHzc";
+const API_KEY = "61722a83638b42abbf0aec9d783d8587";
 
-class Movie extends React.Component {
-  state = {
-    details: {},
-  };
+function Movie(props) {
+  const { id } = useParams();
+  const { genres, toggleFavorites } = props;
+  const [details, setDetails] = useState(null);
+  const [isLoading, setLoading] = useState(false);
 
-  fetchDetails = (id, scrollToTop = false) => {
+  useEffect(() => {
+    if (!details && !isLoading) {
+      fetchDetails(id);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      fetchDetails(id);
+    }
+    // eslint-disable-next-line
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div style={{ textAlign: "center" }}>
+        <CircularProgress className="loader" />
+      </div>
+    );
+  } else if (!details && !isLoading) {
+    return <p style={{ textAlign: "center" }}>No data...</p>;
+  }
+
+  function fetchDetails(id, scrollToTop = false) {
     const link = `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US&append_to_response=recommendations`;
 
+    setLoading(true);
     fetch(link)
       .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({ details: result }, () => {
-            scrollToTop &&
-              window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-          });
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-  };
+      .then((result) => {
+        setDetails(result);
 
-  componentWillMount() {
-    !Object.keys(this.state.details).length &&
-      this.fetchDetails(this.props.match.params.id);
+        if (scrollToTop) {
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
-  componentWillReceiveProps(nextProps) {
-    const nextMovieId = nextProps.match.params.id;
+  const backgroundImage = details.backdrop_path
+    ? `url(https://image.tmdb.org/t/p/w1280/${details.backdrop_path})`
+    : "none";
+  const recommendations = details.recommendations.results;
 
-    if (this.props.match.params.id !== nextMovieId) {
-      this.fetchDetails(nextMovieId, true);
-    }
-  }
+  return (
+    <article
+      className={props.classes.article}
+      style={{ backgroundImage: backgroundImage }}
+    >
+      <Container maxWidth="xl">
+        <section className={props.classes.content}>
+          <Heading details={details} />
+          <Divider />
+          {Object.keys(details).length > 0 && (
+            <Details
+              details={details}
+              collection={details.belongs_to_collection}
+              toggleFavorites={toggleFavorites}
+            />
+          )}
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextState.details.id !== this.state.details.id;
-  }
-
-  render() {
-    const { state, props } = this;
-    const { details } = state;
-    const { genres, toggleFavorites } = props;
-    const backgroundImage = details.backdrop_path
-      ? `url(https://image.tmdb.org/t/p/w1280/${state.details.backdrop_path})`
-      : "none";
-    const collection = Object.keys(details).length
-      ? details.belongs_to_collection
-      : null;
-    const recommendations =
-      details.recommendations && Object.keys(details.recommendations).length
-        ? details.recommendations.results
-        : null;
-
-    return (
-      <article
-        className={props.classes.article}
-        style={{ backgroundImage: backgroundImage }}
-      >
-        <Container maxWidth="xl">
-          <section className={props.classes.content}>
-            <Heading details={details} />
-            <Divider />
-            {Object.keys(details).length && (
-              <Details
-                details={details}
-                collection={collection}
-                toggleFavorites={toggleFavorites}
-              />
-            )}
-
-            {recommendations && recommendations.length ? (
-              <Recommendations
-                movies={recommendations}
-                genres={genres}
-                changeMovie={this.fetchDetails}
-              />
-            ) : null}
-          </section>
-        </Container>
-      </article>
-    );
-  }
+          {details.recommendations.results?.length > 0 && (
+            <Recommendations
+              movies={recommendations}
+              genres={genres}
+              changeMovie={fetchDetails}
+            />
+          )}
+        </section>
+      </Container>
+    </article>
+  );
 }
 
 export default withStyles(styles)(Movie);

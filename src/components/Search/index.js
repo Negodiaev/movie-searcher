@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Typography, Container } from "@material-ui/core";
 import SearchMovies from "../SearchMovies";
 
@@ -11,10 +12,22 @@ export default function Search(props) {
     loadMoreSearchResults,
     toggleFavorites,
   } = props;
+  const navigate = useNavigate();
+
   const isNotCharacters = !searchQuery.length || /[^A-z]/gi.test(searchQuery);
 
+  useEffect(() => {
+    if (!searchQuery) {
+      navigate("/");
+    }
+  }, [navigate, searchQuery]);
+
   if (!searchMovies.length && (searchQuery.length > 1 || isNotCharacters)) {
-    return "No movies";
+    return (
+      <p style={{ fontSize: 16, fontWeight: 700, textAlign: "center" }}>
+        No movies...
+      </p>
+    );
   }
 
   return (

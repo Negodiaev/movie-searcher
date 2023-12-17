@@ -1,8 +1,8 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 
-// const defaultTheme = createMuiTheme();
+// const defaultTheme = createTheme();
 
-const units = createMuiTheme({
+const units = createTheme({
   spacing: 10,
   breakpoints: {
     values: {
@@ -15,7 +15,7 @@ const units = createMuiTheme({
   },
 });
 
-const theme = createMuiTheme({
+const theme = createTheme({
   spacing: units.spacing,
   breakpoints: {
     values: {

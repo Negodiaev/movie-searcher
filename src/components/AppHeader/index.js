@@ -20,12 +20,12 @@ export default function AppHeader(props) {
   const classes = useStyles();
   const anchorRef = React.useRef(null);
 
-  function handleToggle(e) {
+  function handleToggle() {
     anchorRef.current.classList.toggle("active");
   }
 
   return (
-    <React.Fragment>
+    <>
       <AppBar className={classes.appBar}>
         <Toolbar disableGutters>
           <Container maxWidth="xl">
@@ -100,6 +100,6 @@ export default function AppHeader(props) {
         </Toolbar>
       </AppBar>
       <Toolbar />
-    </React.Fragment>
+    </>
   );
 }

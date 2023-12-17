@@ -1,6 +1,6 @@
 # A simple movie searcher with React.js and The Movie Database API
 
-[Demo](https://negodiaev.github.io/movie-searcher/)
+[Demo](https://negodiaev.github.io/movie-searcher/) (It works in Russia only with VPN enabled)
 
 ---
 

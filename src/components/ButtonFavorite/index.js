@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@material-ui/core";
 import { Favorite, FavoriteBorder, Close } from "@material-ui/icons";
 import theme from "../../theme";
@@ -12,6 +12,7 @@ const styles = {
     minWidth: "auto",
     transitionProperty: "background-color, color, box-shadow, border",
     color: "inherit",
+
     "&:hover": {
       color: theme.palette.secondary.light,
     },
@@ -24,58 +25,53 @@ function checkFavorites(id) {
   return favorites.hasOwnProperty(id);
 }
 
-export default class ButtonFavorite extends React.Component {
-  state = {
-    isFavorite: checkFavorites(this.props.movie.id),
-  };
+export default function ButtonFavorite(props) {
+  const {
+    movie,
+    buttonCloser,
+    isVariantText = false,
+    toggleFavorites,
+    updateFavorites,
+  } = props;
+  const [isFavourite, setFavourite] = useState(checkFavorites(movie.id));
 
-  handleFavoritesClick = () => {
-    const { updateFavorites } = this.props;
-
-    this.props.toggleFavorites(this.props.movie);
+  function handleFavoritesClick() {
+    toggleFavorites(movie);
 
     typeof updateFavorites === "function"
       ? updateFavorites()
-      : this.setState({ isFavorite: !this.state.isFavorite });
-  };
+      : setFavourite((prevState) => !prevState);
+  }
 
-  componentWillUpdate(nextProps, nextState) {
+  /*  componentWillUpdate(nextProps, nextState) {
     const isFavorite = checkFavorites(nextProps.movie.id);
 
     isFavorite !== this.state.isFavorite &&
       this.setState({ isFavorite: isFavorite });
-  }
+  }*/
 
-  render() {
-    const { isFavorite } = this.state;
-    const icon = this.props.buttonCloser ? (
-      <Close />
-    ) : isFavorite ? (
-      <Favorite />
-    ) : (
-      <FavoriteBorder />
-    );
-    const title = isFavorite ? "Remove from Favorites" : "Add to Favorites";
-    const textButtonStyles = this.props.styles;
+  const icon = buttonCloser ? (
+    <Close />
+  ) : isFavourite ? (
+    <Favorite />
+  ) : (
+    <FavoriteBorder />
+  );
+  const title = isFavourite ? "Remove from Favorites" : "Add to Favorites";
 
-    return typeof textButtonStyles === "object" ? (
-      <Button
-        size="small"
-        color={isFavorite ? "primary" : "secondary"}
-        style={textButtonStyles}
-        title={title}
-        onClick={this.handleFavoritesClick}
-      >
-        {title}
-      </Button>
-    ) : (
-      <Button
-        style={styles.root}
-        title={title}
-        onClick={this.handleFavoritesClick}
-      >
-        {icon}
-      </Button>
-    );
-  }
+  return isVariantText ? (
+    <Button
+      size="small"
+      color={isFavourite ? "primary" : "secondary"}
+      style={styles}
+      title={title}
+      onClick={handleFavoritesClick}
+    >
+      {title}
+    </Button>
+  ) : (
+    <Button style={styles.root} title={title} onClick={handleFavoritesClick}>
+      {icon}
+    </Button>
+  );
 }

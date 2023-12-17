@@ -12,7 +12,11 @@ export default function PopularMovies(props) {
         pageStart={0}
         loadMore={loadPopularMovies}
         hasMore={hasMore}
-        loader={<CircularProgress className="loader" key={0} />}
+        loader={
+          <div style={{ textAlign: "center" }} key={0}>
+            <CircularProgress className="loader" />
+          </div>
+        }
         threshold={100}
       >
         <Grid container spacing={2}>

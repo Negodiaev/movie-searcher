@@ -72,12 +72,10 @@ export default function Details(props) {
   const productionCountries = details.production_countries;
   const spokenLanguages = details.spoken_languages;
 
-  // console.log(details);
-
   return (
     <section style={styles.info}>
       <Card>
-        <Grid container justify="center" spacing={2}>
+        <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <CardMedia
               image={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
@@ -92,6 +90,7 @@ export default function Details(props) {
               />
               <ButtonFavorite
                 movie={details}
+                isVariantText
                 toggleFavorites={toggleFavorites}
                 styles={styles.buttons.favorite}
               />
@@ -182,12 +181,12 @@ export default function Details(props) {
                         </List>
                       </TableCell>
                     </TableRow>
-                    {collection && collection.name ? (
+                    {collection?.name && (
                       <TableRow>
                         <TableCell>Belongs to:</TableCell>
                         <TableCell>{collection.name}</TableCell>
                       </TableRow>
-                    ) : null}
+                    )}
                     {homepage && (
                       <TableRow>
                         <TableCell>Movie homepage:</TableCell>

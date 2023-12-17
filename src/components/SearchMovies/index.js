@@ -13,7 +13,11 @@ export default function SearchMovies(props) {
         pageStart={0}
         loadMore={loadMoreSearchResults}
         hasMore={hasMore}
-        loader={<CircularProgress className="loader" key={0} />}
+        loader={
+          <div style={{ textAlign: "center" }} key={0}>
+            <CircularProgress className="loader" key={0} />
+          </div>
+        }
         threshold={100}
       >
         <Grid container spacing={2}>

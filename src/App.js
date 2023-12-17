@@ -1,6 +1,5 @@
-import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
-import { withRouter } from "react-router";
+import React, { useCallback, useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { CssBaseline } from "@material-ui/core";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import AppHeader from "./components/AppHeader";
@@ -15,113 +14,119 @@ import "../node_modules/slick-carousel/slick/slick-theme.css";
 import theme from "./theme";
 import "./App.css";
 
-class App extends React.Component {
-  state = {
-    apiKey:
-      "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MTcyMmE4MzYzOGI0MmFiYmYwYWVjOWQ3ODNkODU4NyIsInN1YiI6IjVkMDNiMGFhMGUwYTI2MzMzYWQyMGY0YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OPk5SaNfurhOYbFAhLQufo3XG-p2WhemPbTsng1CHzc",
-    genres: [],
-    popularMovies: [],
-    searchMovies: [],
-    searchQuery: "",
-    hasMoreMovies: true,
-  };
+const API_KEY = "61722a83638b42abbf0aec9d783d8587";
 
-  isSearch = false;
+export default function App() {
+  const navigate = useNavigate();
+  const [genres, setGenres] = useState([]);
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [searchMovies, setSearchMovies] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [hasMoreMovies, setHasMoreMovies] = useState(true);
+  const [isLoadingResults, setLoadingResults] = useState(false);
 
-  fetchGenres = () => {
-    const { apiKey } = this.state;
-    const link = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  function fetchGenres() {
+    const link = `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}&language=en-US`;
 
     fetch(link)
       .then((res) => res.json())
       .then(
         (result) => {
-          this.setState({ genres: result.genres });
+          setGenres(result.genres);
         },
         (error) => {
           console.log(error);
         },
       );
-  };
+  }
 
-  handleSearch = (searchQuery) => {
-    this.setState({ searchQuery: searchQuery }, () => {
+  const handleSearch = useCallback(
+    (searchQuery) => {
+      setSearchQuery(searchQuery);
+
+      if (isLoadingResults) {
+        return;
+      }
+
       if (searchQuery.length) {
         window.scrollTo(0, 0);
-        this.fetchSearchResults();
+        fetchSearchResults(getPageNumber(searchMovies));
       } else {
-        this.setState({ popularMovies: [], hasMoreMovies: true });
+        setPopularMovies([]);
+        setHasMoreMovies(true);
       }
-    });
-  };
+    },
+    // eslint-disable-next-line
+    [searchQuery, isLoadingResults, searchMovies],
+  );
 
-  fetchPopularMovies = () => {
-    const { apiKey, popularMovies } = this.state;
-    const page = this.getPageNumber(popularMovies);
-
-    const link = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=${page}`;
-
-    fetch(link)
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            popularMovies: popularMovies.concat(result.results),
-            hasMoreMovies: this.checkMoreMovies(page, result.total_pages),
-          });
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-  };
-
-  fetchSearchResults = (page) => {
-    const { apiKey, searchQuery } = this.state;
-    const link = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`;
+  const fetchPopularMovies = useCallback(() => {
+    const page = getPageNumber(popularMovies);
+    const link = `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`;
 
     fetch(link)
       .then((res) => res.json())
       .then(
         (result) => {
-          this.setState({
-            searchMovies: result.results,
-            hasMoreMovies: result.total_pages > 1,
-          });
+          setPopularMovies(popularMovies.concat(result.results));
+          setHasMoreMovies(checkMoreMovies(page, result.total_pages));
         },
         (error) => {
           console.log(error);
         },
       );
-  };
+  }, [popularMovies]);
 
-  loadMoreSearchResults = () => {
-    const { apiKey, searchQuery, searchMovies } = this.state;
-    const page = this.getPageNumber(searchMovies);
-    const link = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`;
+  const fetchSearchResults = useCallback(
+    async (page) => {
+      const link = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`;
+
+      setLoadingResults(true);
+
+      await fetch(link)
+        .then((res) => res.json())
+        .then(
+          (result) => {
+            setSearchMovies(result.results);
+            setHasMoreMovies(result.total_pages > 1);
+            navigate("/search");
+          },
+          (error) => {
+            console.log(error);
+          },
+        )
+        .finally(() => {
+          setLoadingResults(false);
+        });
+    },
+    // eslint-disable-next-line
+    [navigate, searchMovies, searchQuery],
+  );
+
+  const loadMoreSearchResults = useCallback(() => {
+    const page = getPageNumber(searchMovies);
+    const link = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`;
 
     if (searchQuery.length) {
       fetch(link)
         .then((res) => res.json())
         .then(
           (result) => {
-            this.setState({
-              searchMovies: searchMovies.concat(result.results),
-              hasMoreMovies: this.checkMoreMovies(page, result.total_pages),
-            });
+            setSearchMovies(searchMovies.concat(result.results));
+            setHasMoreMovies(checkMoreMovies(page, result.total_pages));
           },
           (error) => {
             console.log(error);
           },
         );
     }
-  };
+  }, [searchMovies, searchQuery]);
 
-  getPageNumber = (movies) => movies.length / 20 + 1;
-
-  checkMoreMovies = (page, totalPages) => page < totalPages;
-
-  toggleFavorites = (movie) => {
+  function toggleFavorites(movie) {
     const movieId = movie.id;
     let favorites = JSON.parse(localStorage.getItem("favorites")) || {};
 
@@ -132,100 +137,82 @@ class App extends React.Component {
     }
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
+  }
+
+  const popularMoviesProps = { genres, hasMoreMovies, popularMovies };
+  const searchMoviesProps = {
+    genres,
+    hasMoreMovies,
+    searchMovies,
+    searchQuery,
   };
+  const favoriteMoviesProps = { genres };
 
-  componentDidMount() {
-    this.fetchGenres();
-  }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //     return !(nextState.searchQuery !== this.state.searchQuery);
-  // }
-
-  componentWillUpdate(nextProps, nextState) {
-    this.isSearch = nextState.searchMovies !== this.state.searchMovies;
-  }
-
-  render() {
-    const { genres, popularMovies, searchMovies, searchQuery, hasMoreMovies } =
-      this.state;
-    const popularMoviesProps = { genres, hasMoreMovies, popularMovies };
-    const searchMoviesProps = {
-      genres,
-      hasMoreMovies,
-      searchMovies,
-      searchQuery,
-    };
-    const favoriteMoviesProps = { genres };
-
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <MuiThemeProvider theme={theme}>
-          <div className="App">
-            <AppHeader
-              searchQuery={searchQuery}
-              onSearchChange={this.handleSearch}
-            />
-            <main className="main">
-              <Switch>
-                {this.isSearch && <Redirect to="/search" />}
-                <Route
-                  path="/"
-                  exact
-                  render={(routeProps) => (
-                    <Home
-                      {...routeProps}
-                      {...popularMoviesProps}
-                      loadPopularMovies={this.fetchPopularMovies}
-                      toggleFavorites={this.toggleFavorites}
-                    />
-                  )}
-                />
-                <Route
-                  path="/search"
-                  render={(routeProps) =>
-                    !searchQuery.length ? (
-                      <Redirect to="/" />
-                    ) : (
-                      <Search
-                        {...routeProps}
-                        {...searchMoviesProps}
-                        loadMoreSearchResults={this.loadMoreSearchResults}
-                        toggleFavorites={this.toggleFavorites}
-                      />
-                    )
-                  }
-                />
-                <Route
-                  path="/movie/:id"
-                  render={(routeProps) => (
-                    <Movie
-                      {...routeProps}
-                      genres={genres}
-                      toggleFavorites={this.toggleFavorites}
-                    />
-                  )}
-                />
-                <Route
-                  path="/favorites"
-                  render={(routeProps) => (
-                    <Favorites
-                      {...routeProps}
-                      {...favoriteMoviesProps}
-                      toggleFavorites={this.toggleFavorites}
-                    />
-                  )}
-                />
-                <Route component={NoMatch} />
-              </Switch>
-            </main>
-            <AppFooter />
-          </div>
-        </MuiThemeProvider>
-      </React.Fragment>
-    );
-  }
+  return (
+    <>
+      <CssBaseline />
+      <MuiThemeProvider theme={theme}>
+        <div className="App">
+          <AppHeader searchQuery={searchQuery} onSearchChange={handleSearch} />
+          <main className="main">
+            <Routes>
+              <Route
+                path="/"
+                exact
+                Component={(routeProps) => (
+                  <Home
+                    {...routeProps}
+                    {...popularMoviesProps}
+                    loadPopularMovies={fetchPopularMovies}
+                    toggleFavorites={toggleFavorites}
+                  />
+                )}
+              />
+              <Route
+                path="/search"
+                Component={(routeProps) => (
+                  <Search
+                    {...routeProps}
+                    {...searchMoviesProps}
+                    loadMoreSearchResults={loadMoreSearchResults}
+                    toggleFavorites={toggleFavorites}
+                  />
+                )}
+              />
+              <Route
+                path="/movie/:id"
+                Component={(routeProps) => (
+                  <Movie
+                    {...routeProps}
+                    genres={genres}
+                    toggleFavorites={toggleFavorites}
+                  />
+                )}
+              />
+              <Route
+                path="/favorites"
+                Component={(routeProps) => (
+                  <Favorites
+                    {...routeProps}
+                    {...favoriteMoviesProps}
+                    toggleFavorites={toggleFavorites}
+                  />
+                )}
+              />
+              <Route component={NoMatch} />
+            </Routes>
+          </main>
+          <AppFooter />
+        </div>
+      </MuiThemeProvider>
+    </>
+  );
 }
 
-export default withRouter(App);
+function getPageNumber(movies) {
+  return movies.length / 20 + 1;
+}
+
+function checkMoreMovies(page, totalPages) {
+  return page < totalPages;
+}

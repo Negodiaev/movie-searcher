@@ -14,7 +14,7 @@ export default function ListMovie(props) {
 
   return (
     <div className={classes.wrapper}>
-      <Link to={`movie/${movie.id}`} className={classes.link}>
+      <Link to={`/movie/${movie.id}`} className={classes.link}>
         <Card className={classes.card}>
           <CardMedia image={poster} />
           <div className={classes.details}>

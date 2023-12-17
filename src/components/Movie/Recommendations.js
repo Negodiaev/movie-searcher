@@ -39,7 +39,7 @@ export default function Recommendations(props) {
   const { movies, genres } = props;
 
   return (
-    <React.Fragment>
+    <>
       <Typography variant="h4" component="h3" gutterBottom>
         Recommendations:
       </Typography>
@@ -54,6 +54,6 @@ export default function Recommendations(props) {
           </div>
         ))}
       </Slider>
-    </React.Fragment>
+    </>
   );
 }
