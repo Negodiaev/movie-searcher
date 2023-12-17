@@ -25,7 +25,7 @@ export default function Search(props) {
   if (!searchMovies.length && (searchQuery.length > 1 || isNotCharacters)) {
     return (
       <p style={{ fontSize: 16, fontWeight: 700, textAlign: "center" }}>
-        No movies...
+        No search results...
       </p>
     );
   }

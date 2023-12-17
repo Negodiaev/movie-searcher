@@ -13,15 +13,18 @@ import {
   IconButton,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import CloseIcon from "@material-ui/icons/Close";
 import Searchbar from "../Searchbar";
 import useStyles from "./styles";
 
 export default function AppHeader(props) {
+  const { isMenuOpened, searchQuery, onToggleMenu, onSearchChange } = props;
   const classes = useStyles();
   const anchorRef = React.useRef(null);
 
   function handleToggle() {
     anchorRef.current.classList.toggle("active");
+    onToggleMenu();
   }
 
   return (
@@ -60,7 +63,7 @@ export default function AppHeader(props) {
                     aria-label="Open drawer"
                     onClick={handleToggle}
                   >
-                    <MenuIcon />
+                    {isMenuOpened ? <CloseIcon /> : <MenuIcon />}
                   </IconButton>
                 </Grid>
               </Hidden>
@@ -68,11 +71,11 @@ export default function AppHeader(props) {
                 <nav className={classes.navigation} ref={anchorRef}>
                   <Searchbar
                     classes={classes}
-                    searchQuery={props.searchQuery}
-                    onSearchChange={props.onSearchChange}
+                    searchQuery={searchQuery}
+                    onSearchChange={onSearchChange}
                   />
                   <MenuList className={classes.menu} disablePadding>
-                    <MenuItem>
+                    <MenuItem className={classes.menuItem}>
                       <Link
                         to="/"
                         component={RouterLink}
@@ -82,7 +85,7 @@ export default function AppHeader(props) {
                         Popular
                       </Link>
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem className={classes.menuItem}>
                       <Link
                         to="/favorites"
                         component={RouterLink}

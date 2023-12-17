@@ -24,6 +24,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [hasMoreMovies, setHasMoreMovies] = useState(true);
   const [isLoadingResults, setLoadingResults] = useState(false);
+  const [isMenuOpened, setMenuOpened] = useState(false);
 
   useEffect(() => {
     fetchGenres();
@@ -42,6 +43,10 @@ export default function App() {
           console.log(error);
         },
       );
+  }
+
+  function handleToggleMenu() {
+    setMenuOpened((prevState) => !prevState);
   }
 
   const handleSearch = useCallback(
@@ -153,8 +158,16 @@ export default function App() {
       <CssBaseline />
       <MuiThemeProvider theme={theme}>
         <div className="App">
-          <AppHeader searchQuery={searchQuery} onSearchChange={handleSearch} />
-          <main className="main">
+          <AppHeader
+            isMenuOpened={isMenuOpened}
+            searchQuery={searchQuery}
+            onToggleMenu={handleToggleMenu}
+            onSearchChange={handleSearch}
+          />
+          <main
+            className="main"
+            style={{ paddingTop: isMenuOpened ? 96 : undefined }}
+          >
             <Routes>
               <Route
                 path="/"

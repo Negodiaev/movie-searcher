@@ -90,6 +90,11 @@ const useStyles = makeStyles((theme) => ({
       marginRight: "-1rem",
     },
   },
+  menuItem: {
+    [theme.breakpoints.down("sm")]: {
+      minHeight: 48,
+    },
+  },
 }));
 
 export default useStyles;

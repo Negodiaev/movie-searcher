@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       maxWidth: "17.5rem",
     },
+    [theme.breakpoints.down("xs")]: {
+      maxWidth: "none",
+    },
   },
   card: {
     position: "relative",
